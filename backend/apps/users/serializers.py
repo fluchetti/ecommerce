@@ -50,19 +50,51 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'avatar': instance.avatar.url
         }
 
+class CreateCustomUserSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField()
+    class Meta:
+        model = CustomUser
+        fields = ['email','first_name','last_name','phone','birthday','avatar','password','confirm_password']
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Serializer de los tokens de los usuarios.
-    Añade el slug del usuario al token.
-    """
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        # Encripto el slug del usuario en el token.
-        token['slug'] = user.slug
-        return token
+    def create(self, validated_data):
+        """
+        Funcion para crear un usuario.
 
+        Parametros:
+        - validated_data: Un diccionario con los datos validados.
+
+        Retorna:
+        - El usuario creado con la contraseña hasheada.
+        """
+        print('en create de createcustomuserserializer')
+        if (validated_data['password'] == validated_data['confirm_password']):
+            print('contraseñas coinciden')
+            password = validated_data.pop('password')
+            confirm_password = validated_data.pop('confirm_password')
+            instance = super().create(validated_data)
+            if password:
+                instance.set_password(password)
+                instance.save()
+            return instance
+        # Ojo aca si no estan bien las contraseñas tira el servidor.
+
+
+    def to_representation(self, instance):
+        """
+        Formatea la respuesta del usuario.
+        """
+        return {
+            'id': instance.id,
+            'email': instance.email,
+            'first_name': instance.first_name,
+            'last_name': instance.last_name,
+            'phone': instance.phone,
+            'slug': instance.slug,
+            'bio': instance.bio,
+            'birthday': instance.birthday,
+            'created_at': instance.created_at.strftime("%Y-%m-%d"),
+            'avatar': instance.avatar.url
+        }
 
 class ChangePasswordSerializer(serializers.Serializer):
     model = CustomUser
@@ -85,3 +117,16 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {'new_password': 'Las contraseñas no coinciden.'})
         return data
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Serializer de los tokens de los usuarios.
+    Añade el slug del usuario al token.
+    """
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Encripto el slug del usuario en el token.
+        token['slug'] = user.slug
+        return token

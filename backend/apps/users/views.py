@@ -1,7 +1,7 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import CustomUserSerializer, ChangePasswordSerializer
+from .serializers import CustomUserSerializer, ChangePasswordSerializer,CreateCustomUserSerializer
 from .models import CustomUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.permissions import IsUserAdminStaffOrReadOnly
@@ -115,7 +115,7 @@ class UserSignupView(GenericAPIView):
     """
     Vista para registrar un usuario.
     """
-    serializer_class = CustomUserSerializer
+    serializer_class = CreateCustomUserSerializer
 
     def post(self, request):
         """
