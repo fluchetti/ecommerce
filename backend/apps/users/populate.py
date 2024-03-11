@@ -2,7 +2,7 @@ import factory
 from faker import Faker
 from apps.users.models import CustomUser
 
-fake = Faker()
+fake = Faker().seed_instance(9999)
 
 
 class CustomUserFactory(factory.django.DjangoModelFactory):
@@ -21,8 +21,8 @@ class CustomUserFactory(factory.django.DjangoModelFactory):
         """
         Override the default _create method to set a password for the user.
         """
-        password = 'contrasenia'  # Generate a random password
+        password = 'contrasenia'
         user = model_class(*args, **kwargs)
-        user.set_password(password)  # Set the password for the user
+        user.set_password(password)
         user.save()
         return user

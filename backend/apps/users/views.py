@@ -1,15 +1,15 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import CustomUserSerializer, ChangePasswordSerializer,CreateCustomUserSerializer
+from .serializers import CustomUserSerializer, ChangePasswordSerializer, CreateCustomUserSerializer
 from .models import CustomUser
 from rest_framework_simplejwt.views import TokenObtainPairView
-from apps.users.permissions import IsUserAdminStaffOrReadOnly
+from apps.users.permissions import IsUserAdminStaffOrReadOnly, IsUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.serializers import MyTokenObtainPairSerializer
 from apps.products.serializers import ProductSerializer
 from apps.products.models import Product
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class ListUsers(GenericAPIView):
@@ -95,7 +95,7 @@ class DetailDeleteUpdateUser(GenericAPIView):
             user = self.get_queryset().get(slug=slug)
             self.check_object_permissions(self.request, user)
             user_serializer = self.serializer_class(
-                instance=user, data=request.data)
+                user, data=request.data, partial=True)
             if user_serializer.is_valid():
                 user_serializer.save()
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
@@ -182,6 +182,7 @@ class ChangeUserPassword(GenericAPIView):
     Vista para cambiar la contraseña de un usuario.
     """
     serializer_class = ChangePasswordSerializer
+    permission_classes = [IsUser, IsAuthenticated]
 
     def post(self, request):
         """
@@ -195,12 +196,11 @@ class ChangeUserPassword(GenericAPIView):
         - Un mensaje de exito con codigo 200 si la contraseña fue cambiada.
         - Un mensaje de error con codigo 400 si las contraseñas no coinciden.
         """
-        user = request.user
         user_serializer = self.serializer_class(data=request.data)
         if user_serializer.is_valid():
             new_password = user_serializer.validated_data['password2']
-            user.set_password(new_password)
-            user.save()
+            request.user.set_password(new_password)
+            request.user.save()
             return Response({'message': 'Contraseña cambiada.'}, status=status.HTTP_200_OK)
         else:
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

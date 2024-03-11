@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .serializers import ProductSerializer, ProductCreateEditSerializer
 from .models import Product
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsUserAdminStaffOrReadOnly
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -85,7 +85,6 @@ class DetailDeleteProduct(GenericAPIView):
         - status 404 si el producto no existe.
         - status 403 si el usuario no es el propietario del producto.
         """
-        print('en delete product')
         try:
             product = self.get_queryset().get(slug=slug)
             product.delete()
@@ -137,19 +136,14 @@ class EditProduct(GenericAPIView):
         - status 400 si el serializer no es valido.
         - status 403 si el usuario no es el propietario del producto.
         """
-        print(request.data)
         try:
             product = self.get_queryset().get(slug=slug)
 
             product_serializer = self.serializer_class(
                 instance=product, data=request.data)
-            print(product_serializer)
             if product_serializer.is_valid():
-                print('valid serializer')
                 product_serializer.save()
                 return Response(product_serializer.data, status=status.HTTP_200_OK)
-            print('serializer no valid')
-            print(product_serializer.errors)
             return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Product.DoesNotExist:
             return Response({'Error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -160,7 +154,7 @@ class CreateProduct(GenericAPIView):
     Vista para crear un producto.
     """
     serializer_class = ProductCreateEditSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsUserAdminStaffOrReadOnly,]
     parser_classes = (MultiPartParser, FormParser)
 
     # Publicar producto. Requiere autenticacion.
@@ -174,14 +168,13 @@ class CreateProduct(GenericAPIView):
         Retorna:
         - El producto publicado y status 200 si el serializer es valido.
         - status 400 si el serializer no es valido.
-        - status 403 si el usuario no esta autenticado.
+        - status 401 si el usuario no esta autenticado.
         """
         product_serializer = self.serializer_class(
             data=request.data, context={'request': self.request})
         if product_serializer.is_valid():
             product_serializer.save()
-            print(product_serializer.validated_data)
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
+            return Response(product_serializer.data, status=status.HTTP_201_CREATED)
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

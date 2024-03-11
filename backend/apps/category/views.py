@@ -49,7 +49,6 @@ class ListCreateCategory(GenericAPIView):
         - Un mensaje de error con codigo 400 si la peticion es erronea.
         - Un mensaje de error con codigo 401 si el usuario no tiene permisos.
         """
-
         category_serializer = self.serializer_class(data=request.data)
         if category_serializer.is_valid():
             category_serializer.save()
@@ -74,7 +73,7 @@ class ListAllCategories(APIView):
         return Response(category_serializer.data, status=status.HTTP_200_OK)
 
 
-class DetailDeleteCategory(GenericAPIView):
+class DetailDeleteUpdateCategory(GenericAPIView):
     """
     Vista para ver, actualizar y eliminar categorias.
     """
@@ -102,7 +101,7 @@ class DetailDeleteCategory(GenericAPIView):
         except Category.DoesNotExist:
             return Response({'Error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, id):
+    def delete(self, request, slug):
         """
         Elimina una categoria.
 
@@ -115,13 +114,13 @@ class DetailDeleteCategory(GenericAPIView):
         - Un mensaje de error con codigo 401 si el usuario no tiene permisos.
         """
         try:
-            category = self.get_queryset().get(id=id)
+            category = self.get_queryset().get(slug=slug)
             category.delete()
             return Response({'Succes': 'Category deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Category.DoesNotExist:
             return Response({'Error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, id):
+    def put(self, request, slug):
         """
         Edita una categoria.
 
@@ -139,12 +138,12 @@ class DetailDeleteCategory(GenericAPIView):
         """
         print(request.data)
         try:
-            category = self.get_queryset().get(id=id)
+            category = self.get_queryset().get(slug=slug)
             category_serializer = self.serializer_class(
                 instance=category, data=request.data)
             if category_serializer.is_valid():
                 category_serializer.save()
-                return Response(category_serializer.data, status=status.HTTP_204_NO_CONTENT)
+                return Response(category_serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(category_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Category.DoesNotExist:

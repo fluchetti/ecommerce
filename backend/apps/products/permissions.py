@@ -9,3 +9,13 @@ class IsOwnerOrReadOnly(BasePermission):
             return True
         # Autenticado y dueño
         return request.user.is_authenticated and (obj.owner == request.user)
+
+
+class IsUserAdminStaffOrReadOnly(BasePermission):
+
+    def has_permission(self, request, view):
+        # Permitimos leer a cualquiera
+        if request.method == 'GET':
+            return True
+        # Autenticado y admin o staff
+        return request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
