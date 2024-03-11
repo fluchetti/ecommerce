@@ -18,4 +18,4 @@ class IsUserAdminStaffOrReadOnly(BasePermission):
         if request.method == 'GET':
             return True
         # Autenticado y admin o staff
-        return request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
+        return request.user.is_authenticated or (request.user.is_staff or request.user.is_superuser)

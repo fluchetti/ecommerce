@@ -15,7 +15,6 @@ class ListProducts(GenericAPIView):
     Vista para listar los productos.
     """
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly,]
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
@@ -87,6 +86,7 @@ class DetailDeleteProduct(GenericAPIView):
         """
         try:
             product = self.get_queryset().get(slug=slug)
+            self.check_object_permissions(request, product)
             product.delete()
             return Response({'Succes': 'Product deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Product.DoesNotExist:
@@ -138,7 +138,7 @@ class EditProduct(GenericAPIView):
         """
         try:
             product = self.get_queryset().get(slug=slug)
-
+            self.check_object_permissions(request, product)
             product_serializer = self.serializer_class(
                 instance=product, data=request.data)
             if product_serializer.is_valid():
