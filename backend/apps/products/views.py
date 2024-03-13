@@ -173,8 +173,11 @@ class CreateProduct(GenericAPIView):
         product_serializer = self.serializer_class(
             data=request.data, context={'request': self.request})
         if product_serializer.is_valid():
+            print('serializer valido')
             product_serializer.save()
             return Response(product_serializer.data, status=status.HTTP_201_CREATED)
+        print('serializer no valido')
+        print(product_serializer.errors)
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

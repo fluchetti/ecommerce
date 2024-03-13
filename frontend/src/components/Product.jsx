@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const Product = ({ data }) => {
+export const Product = ({ data, status }) => {
   let {
     category_slug,
     title,
@@ -30,6 +30,7 @@ export const Product = ({ data }) => {
         )}
       </div>
       <div className="card-footer text-end">
+        <p>{status} </p>
         {discount_percentage > 0 && (
           <small
             className="mx-2"

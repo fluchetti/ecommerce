@@ -18,7 +18,7 @@ export const CartItem = ({ data }) => {
       <div className="container my-2">
         <h3 className="text-center">{`${quantity}x ${title}`}</h3>
         <p>{summary}</p>
-        <p>Total: {finalPrice}</p>
+        <p>Total: {finalPrice.toFixed(2)}</p>
         <button onClick={deleteItem} className="btn btn-danger m-2">
           Borrar uno
         </button>

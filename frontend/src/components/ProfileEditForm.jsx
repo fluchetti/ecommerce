@@ -19,7 +19,6 @@ export const ProfileEditForm = ({ data, authTokens }) => {
       method: "PUT",
       headers: {
         Accept: "application/json",
-
         Authorization: `Bearer ${authTokens.access}`,
       },
       body: form_data,
@@ -30,13 +29,13 @@ export const ProfileEditForm = ({ data, authTokens }) => {
         }
       })
       .then((json) => {
-        navigate("/profile");
+        console.log("ta todo bieeeen");
+        navigate(`/profile/${form.slug}`);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
   const handleDiscard = (e) => {
     e.preventDefault();
     setForm(data);

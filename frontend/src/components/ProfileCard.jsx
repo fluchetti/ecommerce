@@ -9,10 +9,14 @@ export const ProfileCard = ({ userProfile, deleteAccount, user }) => {
   let api = helpHttp();
   const handleDeleteImage = () => {
     console.log("borrando imagen");
-    api.del(`http://127.0.0.1:8000/api/users/delete_profile_image`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${authTokens.access}` },
-    });
+    api
+      .del(`http://127.0.0.1:8000/api/users/delete_profile_image`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${authTokens.access}` },
+      })
+      .then((res) => {
+        window.location.reload();
+      });
   };
 
   return (
@@ -24,8 +28,14 @@ export const ProfileCard = ({ userProfile, deleteAccount, user }) => {
             height="100"
             width="100"
           />
-          {userProfile.id === user.user_id && (
-            <button className="btn btn-danger mt-3" onClick={handleDeleteImage}>
+          {userProfile.id === (user ? user.user_id : null) && (
+            <button
+              className="btn btn-danger mt-3"
+              disabled={
+                userProfile.avatar !== "/media/users/default_avatar.png"
+              }
+              onClick={handleDeleteImage}
+            >
               Eliminar foto actual
             </button>
           )}
@@ -62,7 +72,7 @@ export const ProfileCard = ({ userProfile, deleteAccount, user }) => {
           </div>
         </div>
 
-        {userProfile.id === user.user_id && (
+        {userProfile.id === (user ? user.user_id : null) && (
           <div>
             <NavLink to="/profile/edit" className="btn btn-primary mt-4 mx-2">
               Editar datos
@@ -109,6 +119,7 @@ export const ProfileCard = ({ userProfile, deleteAccount, user }) => {
                   onClick={deleteAccount}
                   type="button"
                   className="btn btn-primary"
+                  data-bs-dismiss="modal"
                 >
                   Confirmar
                 </button>

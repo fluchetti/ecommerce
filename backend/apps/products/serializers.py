@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from apps.products.models import Product
+from apps.category.serializers import CategorySerializer
+from apps.category.models import Category
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -28,11 +30,16 @@ class ProductSerializer(serializers.ModelSerializer):
             'image': instance.image.url,
             'price': instance.price,
             'discount_percentage': instance.discount_percentage,
-            'discount_value': instance.discount_value
+            'discount_value': instance.discount_value,
+            'status': instance.status
         }
 
 
 class ProductCreateEditSerializer(serializers.ModelSerializer):
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all())
+
     class Meta:
         model = Product
         fields = ['category', 'title', 'image', 'summary', 'description',

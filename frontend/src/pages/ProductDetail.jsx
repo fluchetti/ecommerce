@@ -31,8 +31,11 @@ export const ProductDetail = () => {
 
   // Add to cart
   const addToCart = () => {
-    console.log("mando a añadir a , ", product);
+    setAdding(true);
     dispatch({ type: TPYES.ADD_TO_CART, payload: product });
+    setTimeout(() => {
+      setAdding(false);
+    }, 2000);
   };
   // Buy product
   const buyProduct = () => {
@@ -130,7 +133,7 @@ export const ProductDetail = () => {
               <div className="d-flex flex-column">
                 <button
                   className="btn btn-primary mb-3"
-                  disabled={user ? false : true}
+                  disabled={!user}
                   onClick={buyProduct}
                 >
                   Comprar
@@ -138,7 +141,7 @@ export const ProductDetail = () => {
                 <button
                   className="btn btn-secondary mb-3"
                   onClick={addToCart}
-                  disabled={user ? false : true}
+                  disabled={!user || adding}
                 >
                   {adding ? "Añadiendo al carrito.." : "Añadir al carrito"}
                 </button>

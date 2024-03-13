@@ -35,6 +35,7 @@ export const CategoryDetail = () => {
       .then((res) => {
         if (!res.err) {
           setRelatedProducts(res);
+          console.log(res);
         } else {
           setError(true);
         }
@@ -68,8 +69,10 @@ export const CategoryDetail = () => {
             </div>
           </div>
         )}
-        <h6 className="text-center py-3">Related products</h6>
         <div className="row">
+          {relatedProducts.length > 0 && (
+            <h6 className="text-center py-3">Related products</h6>
+          )}
           {relatedProducts.length > 0 &&
             relatedProducts.map((product) => (
               <div className="col-md-3 mb-3" key={product.id}>

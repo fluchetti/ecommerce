@@ -13,7 +13,6 @@ export const ProfileEdit = () => {
         headers: { Authorization: `Bearer ${authTokens.access}` },
       })
       .then((res) => {
-        console.log(res);
         setUserProfile(res);
       });
   }, [user]);

@@ -1,52 +1,67 @@
 # Ecommerce
 
-Ecommerce con backend desarrollado en Django Rest Framework y frontend en React.  
-Base de datos sqlite.  
-A continuacion se listan algunas funcionalidades con las que se puede interactuar. Se diferencia entre cuentas de tipo usuario y de tipo admin o staff.
+Este proyecto es una simulacion de una tienda virtual.
 
-## Usuarios
-
-### Cuentas
-
-- _Crear cuenta_
-- _Iniciar sesion_
-- _Cerrar sesion_
-- _Borrar cuenta_
-- _Ver perfil_
-- _Editar perfil_
-- _Cambiar contraseña_
-
-### Productos
-
-- _Crear producto_
-- _Listar productos_
-- _Ver detalle de producto_
-- _Borrar producto_
-- _Editar producto_
-
-### Categorias
-
-- _Listar categorias_
-- _Ver detalle de categoria_
-- _Ver productos de la categoria_
-
-### Carrito de compras
-
-- _Agregar producto_
-- _Eliminar producto_
-- _"Realizar" compra_
+Preview disponible en
 
 #
 
-## Admin/Staff
+## Stack
 
-Funcionalidades restringidas para Admin o Staff:
+- Django rest framework
+- React
+- Bootstrap
 
-- _Crear categoria_
-- _Editar categoria_
-- _Borrar categoria_
-- _Editar productos_
+#
 
-### Ordenes de venta
+## Funcionalidades
 
-### Cart items
+La aplicacion distingue entre tres tipos de usuarios.
+
+- **Visitantes**
+- **Usuarios**
+- **Administradores / Staff (no implementado en frontend)**
+
+### Visitantes
+
+Los visitantes pueden interactuar con la aplicacion viendo productos, categorias y vendedores. Ademas pueden iniciar sesion o registrarse.
+
+### Usuarios
+
+Los usuarios, ademas de los permisos ya nombrados, pueden crear, editar y borrar productos (los suyos). Editar y borrar su cuenta. Cambiar su contraseña. "Realizar compras" agregando productos al carrito y haciendo un checkout. Pueden ver sus productos y sus compras.
+
+### Administradores y Staff
+
+Los admin y staff tienen permisos sobre todas las funcionalidades de la aplicacion. Pueden hacer todo lo nombrado anteriormente y ademas administar las categorias.
+
+#
+
+## Aprendizajes
+
+Muchos. Entre ellos:
+
+- JWT: como funcionan y sus limitaciones. Refresh y blacklisting.
+
+- Manejo de imagenes: parsers y FormData.
+
+- Testsing: una introduccion a los unit test. **Aprender sobre Faker y Factory Boy**
+
+#
+
+## Mejoras
+
+Tambien muchas. Algunas que se me ocurren:
+
+- Relacion OneToOne entre cuenta y datos de la cuenta.
+
+- Integrar un sistema de checkout.
+
+- Endpoints y estructura del proyecto: seguir convenciones y mejores practicas.
+
+- Optimizar las respuestas: algunos serializadores retornan datos que luego no son utilizados en el frontend.
+
+- Optimizar consumo de recursos: se almacena demasiada informacion no relevante en estados y contextos, tambien se hacen muchas peticiones.
+
+- Mejorar aspecto de la aplicacion y su responsiveness.
+
+- Agregar mas mensajes/alertas para la interaccion del usuario.

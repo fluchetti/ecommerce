@@ -1,5 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import { helpHttp } from "../helpers/helpHttp";
+import { useNavigate } from "react-router-dom";
 
 const initialForm = {
   title: "",
@@ -7,14 +9,26 @@ const initialForm = {
   summary: "",
   price: "",
   discount_percentage: "",
-  category: "",
+  category: "1",
   image: "",
-  status: "",
+  status: "published",
 };
 
 export const ProductCreateForm = () => {
   const { authTokens } = useContext(AuthContext);
   const [form, setForm] = useState(initialForm);
+  const [categories, setCategories] = useState([]);
+  const [message, setMessage] = useState({ type: null, msg: "" });
+  const navigate = useNavigate();
+  let api = helpHttp();
+  useEffect(() => {
+    api.get("http://127.0.0.1:8000/api/categories/all").then((res) => {
+      if (!res.err) {
+        setCategories(res);
+      }
+    });
+  }, []);
+
   const handleDiscard = () => {
     setForm(initialForm);
   };
@@ -54,121 +68,148 @@ export const ProductCreateForm = () => {
       })
       .then((json) => {
         console.log(json);
+        setMessage({
+          type: "success",
+          msg: "Producto creado correctamente. Estas siendo redireccionado.",
+        });
+        setForm(initialForm);
+        setTimeout(() => {
+          navigate("/posts");
+        }, 3000);
       })
       .catch((error) => {
         console.log(error);
+        setMessage({ type: "danger", msg: "Ocurrió un error" });
       });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-3">
-        <label htmlFor="title" className="form-label">
-          Título
-        </label>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="title" className="form-label">
+            Título
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="summary" className="form-label">
+            Resumen
+          </label>
+          <textarea
+            className="form-control"
+            name="summary"
+            rows="3"
+            value={form.summary}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">
+            Descripción
+          </label>
+          <textarea
+            className="form-control"
+            name="description"
+            rows="5"
+            value={form.description}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="price" className="form-label">
+            Precio
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="discountPercentage" className="form-label">
+            Porcentaje de Descuento
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            name="discount_percentage"
+            value={form.discount_percentage}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="category" className="form-label">
+            Categoría
+          </label>
+          <select
+            className="form-select"
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+          >
+            <option value="">Seleccionar categoría</option>
+            {categories.length > 0 &&
+              categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="image" className="form-label">
+            Imagen
+          </label>
+          <input
+            type="file"
+            className="form-control"
+            accept="image/jpeg,image/png"
+            name="image"
+            onChange={handleImageChange}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="status" className="form-label">
+            Estado
+          </label>
+          <select
+            className="form-select"
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+          >
+            <option value="published">Publicado</option>
+            <option value="paused">Pausado</option>
+          </select>
+        </div>
         <input
-          type="text"
-          className="form-control"
-          name="title"
-          value={form.title}
-          onChange={handleChange}
+          type="submit"
+          className="btn btn-primary me-2"
+          value={"Publicar"}
         />
+        <button className="btn btn-primary mx-2" onClick={handleDiscard}>
+          Cancelar
+        </button>
+      </form>
+      <div>
+        {message.type && (
+          <div
+            className={`alert alert-${message.type} alert-dismissible fade show text-center mt-3`}
+          >
+            {message.msg}
+          </div>
+        )}
       </div>
-      <div className="mb-3">
-        <label htmlFor="summary" className="form-label">
-          Resumen
-        </label>
-        <textarea
-          className="form-control"
-          name="summary"
-          rows="3"
-          value={form.summary}
-          onChange={handleChange}
-        ></textarea>
-      </div>
-      <div className="mb-3">
-        <label htmlFor="description" className="form-label">
-          Descripción
-        </label>
-        <textarea
-          className="form-control"
-          name="description"
-          rows="5"
-          value={form.description}
-          onChange={handleChange}
-        ></textarea>
-      </div>
-      <div className="mb-3">
-        <label htmlFor="price" className="form-label">
-          Precio
-        </label>
-        <input
-          type="number"
-          className="form-control"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="discountPercentage" className="form-label">
-          Porcentaje de Descuento
-        </label>
-        <input
-          type="number"
-          className="form-control"
-          name="discount_percentage"
-          value={form.discount_percentage}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="category" className="form-label">
-          Categoría
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="image" className="form-label">
-          Imagen
-        </label>
-        <input
-          type="file"
-          className="form-control"
-          accept="image/jpeg,image/png"
-          name="image"
-          onChange={handleImageChange}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="status" className="form-label">
-          Estado
-        </label>
-        <select
-          className="form-select"
-          name="status"
-          value={form.status}
-          onChange={handleChange}
-        >
-          <option value="published">Publicado</option>
-          <option value="paused">Pausado</option>
-        </select>
-      </div>
-      <input
-        type="submit"
-        className="btn btn-primary me-2"
-        value={"Publicar"}
-      />
-      <button className="btn btn-primary mx-2" onClick={handleDiscard}>
-        Cancelar
-      </button>
-    </form>
+    </div>
   );
 };
 

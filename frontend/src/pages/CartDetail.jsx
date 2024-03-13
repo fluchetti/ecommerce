@@ -34,7 +34,7 @@ export const CartDetail = () => {
       })
       .then((res) => {
         console.log(res);
-        setMessage(res.message);
+        setMessage("Compra realizada con éxito.");
         setTimeout(() => {
           // Quitar mensaje, llevar cart al estado inicial y redireccionar al inicio.
           setMessage(null);

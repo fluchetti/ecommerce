@@ -14,9 +14,7 @@ export const Profile = () => {
   // Si el token de access expiro y entro directo a esta pagina no me autoriza a hacer el fetch.
   useEffect(() => {
     api
-      .get(`http://127.0.0.1:8000/api/users/${slug}`, {
-        headers: { Authorization: `Bearer ${authTokens?.access}` },
-      })
+      .get(`http://127.0.0.1:8000/api/users/${slug}`)
       .then((res) => {
         setUserProfile(res);
       })
@@ -38,8 +36,6 @@ export const Profile = () => {
         },
       })
       .then((res) => {
-        console.log(res);
-        alert(res.message);
         logout();
       })
       .catch((error) => {
@@ -49,7 +45,7 @@ export const Profile = () => {
 
   return (
     <>
-      {loadingProfile && <p>Carando datos del perfil...</p>}
+      {loadingProfile && <p>Cargando datos del perfil...</p>}
       {userProfile && (
         <ProfileCard
           deleteAccount={deleteAccount}

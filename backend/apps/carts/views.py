@@ -5,6 +5,7 @@ from .serializers import CartSerializer, CartItemSerializer
 from .models import Cart, CartItem
 from apps.products.models import Product
 from rest_framework.permissions import IsAuthenticated
+from apps.carts.permissions import IsOwnerAdminStaff
 
 
 class ListCreateCartView(GenericAPIView):
@@ -46,6 +47,7 @@ class ListCreateCartView(GenericAPIView):
 
 class DetailCartView(GenericAPIView):
     serializer_class = CartSerializer
+    permission_classes = [IsOwnerAdminStaff,]
 
     def get_queryset(self):
         return Cart.objects.all()
@@ -53,6 +55,7 @@ class DetailCartView(GenericAPIView):
     def get(self, request, pk):
         try:
             cart = self.get_queryset().get(id=pk)
+            self.check_object_permissions(request, cart)
             cart_serializer = self.serializer_class(cart, many=True)
             return Response(cart_serializer.data, status=status.HTTP_200_OK)
         except Cart.DoesNotExist:

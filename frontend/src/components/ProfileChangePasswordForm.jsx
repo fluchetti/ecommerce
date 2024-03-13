@@ -7,7 +7,7 @@ const initialForm = { password: "", password2: "" };
 const ProfileChangePasswordForm = () => {
   const [form, setForm] = useState(initialForm);
   const { authTokens } = useContext(AuthContext);
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState({ msg: null, type: "" });
   let api = helpHttp();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,56 +28,58 @@ const ProfileChangePasswordForm = () => {
           method: "POST",
         })
         .then((res) => {
-          console.log(res);
-          console.log("Contraseña cambiada exitosamente");
-          setMessage("Contraseña cambiada exitosamente");
+          setMessage({ msg: "Contraseña cambiada con éxito", type: "success" });
         })
         .catch((error) => {
           console.log(error);
-          setMessage("Ocurrio un error al cambiar la contraseña");
+          setMessage({ msg: "Error al cambiar la contraseña", type: "danger" });
         });
     } else {
-      console.log("Las contraseñas no coinciden");
+      setMessage({ msg: "Las contraseñas no coinciden", type: "danger" });
     }
     // Limpiar los campos de entrada después de enviar el formulario
     setForm;
   };
 
   return (
-    <div className="container d-flex justify-content-center my-5">
-      <form onSubmit={handleSubmit} className="mt-4 w-50">
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Nueva contraseña:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={form.password}
-            name="password"
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password2" className="form-label">
-            Confirmar contraseña:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password2"
-            value={form.password2}
-            name="password2"
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Cambiar contraseña
-        </button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
+    <>
+      <div className="container d-flex justify-content-center my-5">
+        <form onSubmit={handleSubmit} className="mt-4 w-50">
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Nueva contraseña:
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              value={form.password}
+              name="password"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password2" className="form-label">
+              Confirmar contraseña:
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="password2"
+              value={form.password2}
+              name="password2"
+              onChange={handleChange}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Cambiar contraseña
+          </button>
+        </form>
+      </div>
+      <div className={`alert alert-${message.type} container w-50 mb-5 py-1`}>
+        {message.msg && <p className="text-center">{message.msg}</p>}
+      </div>
+    </>
   );
 };
 

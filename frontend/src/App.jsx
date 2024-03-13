@@ -22,7 +22,6 @@ import Posts from "./pages/Posts";
 import ProfileEdit from "./pages/ProfileEdit";
 import ProductEdit from "./pages/ProductEdit";
 import ProductCreate from "./pages/ProductCreate";
-import ProfileChangePasswordForm from "./components/ProfileChangePasswordForm";
 import ChangePassword from "./pages/ChangePassword";
 import Compras from "./pages/Compras";
 function App() {

@@ -10,6 +10,7 @@ from apps.users.serializers import MyTokenObtainPairSerializer
 from apps.products.serializers import ProductSerializer
 from apps.products.models import Product
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class ListUsers(GenericAPIView):
@@ -37,6 +38,7 @@ class DetailDeleteUpdateUser(GenericAPIView):
     """
     serializer_class = CustomUserSerializer
     permission_classes = [IsUserAdminStaffOrReadOnly,]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return CustomUser.objects.all()
@@ -92,13 +94,17 @@ class DetailDeleteUpdateUser(GenericAPIView):
         - Un mensaje de error con codigo 401 si el usuario no tiene permisos.
         """
         try:
+            print('en put user')
             user = self.get_queryset().get(slug=slug)
             self.check_object_permissions(self.request, user)
             user_serializer = self.serializer_class(
                 user, data=request.data, partial=True)
             if user_serializer.is_valid():
+                print('serializer valido')
                 user_serializer.save()
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
+            print('serializer no valido')
+            print(user_serializer.errors)
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except CustomUser.DoesNotExist:
             return Response({'Error': '404 not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -141,6 +147,7 @@ class UserSignupView(GenericAPIView):
             user_serializer.save()
             return Response(user_serializer.validated_data, status=status.HTTP_201_CREATED)
         else:
+            print(user_serializer.errors)
             if 'email' in user_serializer.errors:
                 error_message = {
                     'message': 'Ya existe un usuario con este email.', 'status': 400}

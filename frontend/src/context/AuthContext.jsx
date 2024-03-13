@@ -16,6 +16,7 @@ const AuthProvider = ({ children }) => {
       : null
   );
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const api = helpHttp();
 
@@ -33,6 +34,8 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.log("Ocurrio un error en el fetch");
       console.log(error);
+      setUser(null);
+      setError("Credenciales invalidas");
     }
   };
   const updateTokens = async () => {
@@ -80,7 +83,7 @@ const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [authTokens, loading]);
 
-  const data = { authTokens, login, logout, user };
+  const data = { authTokens, login, logout, user, error };
   return (
     <AuthContext.Provider value={data}>
       {loading ? null : children}

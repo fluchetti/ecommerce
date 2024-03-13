@@ -9,12 +9,12 @@ const initialForm = {
   phone: "",
   birthday: "",
   password: "",
-  password2: "",
+  confirm_password: "",
 };
 
 export const SignupForm = () => {
   const [form, setForm] = useState(initialForm);
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState({ message: "", type: "" });
   const navigate = useNavigate();
   let api = helpHttp();
   const handleSubmit = (e) => {
@@ -22,27 +22,30 @@ export const SignupForm = () => {
     // Hacer un put con el form para crear usuario.
     // Valido aca que las contraseñas sean iguales. Si no lo son
     // Seteo las password a defecto y los demas campos los dejo como estaban.
-    if (form.password !== form.password2) {
-      alert("Las contraseñas no coinciden!");
+    if (form.password !== form.confirm_password) {
+      setForm({ ...form, password: "", confirm_password: "" });
+      setMessage("Las contraseñas no coinciden");
+      return;
     }
-    const { password2, ...formData } = form;
     api
       .post("http://127.0.0.1:8000/api/users/signup", {
         headers: { "Content-type": "application/json" },
-        body: { ...formData },
+        body: { ...form },
       })
       .then((res) => {
         console.log(res);
         setForm(initialForm);
-        setMessage(true);
+        setMessage({ message: "Usuario creado con exito", type: "success" });
         setTimeout(() => {
           navigate("/login");
         }, 3000);
       })
       .catch((error) => {
-        console.log("en el catch");
         console.log(error);
-        setMessage(error);
+        setMessage({
+          message: "Ocurrio un error al crear el usuario",
+          type: "danger",
+        });
       });
   };
 
@@ -121,8 +124,8 @@ export const SignupForm = () => {
         <div className="mb-3">
           <input
             type="password"
-            value={form.password2}
-            name="password2"
+            value={form.confirm_password}
+            name="confirm_password"
             onChange={handleChange}
             className="form-control"
             placeholder="Confirmar contraseña"
@@ -135,7 +138,11 @@ export const SignupForm = () => {
           </button>
         </div>
       </form>
-      {message && <p>{message.statusText}</p>}
+      {message && (
+        <p className={`alert alert-${message.type} text-center`}>
+          {message.message}
+        </p>
+      )}
     </>
   );
 };
