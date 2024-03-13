@@ -2,7 +2,7 @@
 
 Este proyecto es una simulacion de una tienda virtual.
 
-Preview disponible en
+La aplicación está desplegada en Netlify. Podes verla e interactuar con ella [aquí](https://ecommercefluch.netlify.app/).
 
 #
 
